@@ -2,9 +2,35 @@ name: A workflow for my Hello World file
 on: push
 
 jobs:
-  build:
+  deployDemo:
+    if: contains(secrets.SERVER, 'demo')
     name: Hello world action
     runs-on: ubuntu-latest
+    env:
+      directory: ./${{ secrets.SERVER }}
+
     steps:
     - uses: actions/checkout@v1 #checkout the repo locally on "CI Server"
-    - uses: ./action-a
+    - run: echo "::set-env name=directory::apps/app1"
+    - run: echo "$(cat file.txt)"
+      working-directory: ${{ env.directory }}
+        
+    # - name: set environment variables
+    #   uses: allenevans/set-env@v2.0.0
+    #   with:
+    #     MY_ENV_VAR: 'demo'
+
+    # - name: Printenv
+    #   run: echo $MY_ENV_VAR
+
+    # - if: contains($MY_ENV_VAR, 'demo')
+    #   name: IF
+    #   run: echo "Demo"
+      
+    # - if: false == contains($MY_ENV_VAR, 'live')
+    #   name: Else
+    #   run: echo "Live"
+
+    # - uses: ./action-a
+    #   with:
+    #     MY_NAME: "Mona"
